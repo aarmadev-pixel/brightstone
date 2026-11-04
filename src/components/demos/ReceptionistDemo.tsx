@@ -58,7 +58,7 @@ export function ReceptionistDemo() {
         </p>
       </div>
       <div className="grid gap-0 lg:grid-cols-[240px_1fr]">
-        <div className="border-b border-mist p-4 lg:border-b-0 lg:border-r">
+        <div className="min-w-0 border-b border-mist p-4 lg:border-b-0 lg:border-r">
           <p className="px-2 text-xs font-semibold uppercase tracking-[0.16em] text-slate">
             Sample scenarios
           </p>

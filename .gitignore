@@ -40,3 +40,16 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local editor databases and unrelated workstation configuration
+/.vscode/browse.vc.db*
+/.vscode/c_cpp_properties.json
+/.vscode/settings.json
+
+# Local review exports
+/brightstone-changes.patch
+/brightstone-review.zip
+
+# Codex review exports
+/brightstone-codex-review.patch
+/brightstone-codex-review.zip

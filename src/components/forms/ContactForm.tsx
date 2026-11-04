@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import {
+  ENQUIRY_LIMITS,
   emptyEnquiry,
   industryOptions,
   serviceInterestOptions,
@@ -15,26 +16,66 @@ import { cn } from "@/lib/cn";
 type Status =
   | { type: "idle" }
   | { type: "submitting" }
-  | { type: "demo"; message: string };
+  | { type: "demo"; message: string }
+  | { type: "error"; message: string };
+
+import { interpretEnquiryResponse } from "@/lib/enquiry-response";
 
 export function ContactForm() {
   const [values, setValues] = useState<EnquiryInput>(emptyEnquiry);
   const [errors, setErrors] = useState<EnquiryErrors>({});
   const [status, setStatus] = useState<Status>({ type: "idle" });
+  const formRef = useRef<HTMLFormElement>(null);
+  const submittingRef = useRef(false);
+  const demoHeadingRef = useRef<HTMLHeadingElement>(null);
+  const returnFocusRef = useRef(false);
+  const focusFirstErrorRef = useRef(false);
+
+  useEffect(() => {
+    if (!focusFirstErrorRef.current) return;
+    focusFirstErrorRef.current = false;
+    formRef.current
+      ?.querySelector<HTMLElement>('[aria-invalid="true"]')
+      ?.focus();
+  }, [errors]);
+
+  useEffect(() => {
+    if (status.type === "demo") demoHeadingRef.current?.focus();
+    else if (returnFocusRef.current) {
+      returnFocusRef.current = false;
+      formRef.current?.querySelector<HTMLElement>("#fullName")?.focus();
+    }
+  }, [status.type]);
 
   function update<K extends keyof EnquiryInput>(key: K, value: EnquiryInput[K]) {
-    setValues((current) => ({ ...current, [key]: value }));
+    const nextValues = { ...values, [key]: value };
+    setValues(nextValues);
+    if (errors[key]) {
+      const nextError = validateEnquiry(nextValues)[key];
+      setErrors((current) => {
+        if (current[key] === nextError) return current;
+        const nextErrors = { ...current };
+        if (nextError) nextErrors[key] = nextError;
+        else delete nextErrors[key];
+        return nextErrors;
+      });
+    }
+    if (status.type === "error") setStatus({ type: "idle" });
   }
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (submittingRef.current) return;
+
     const nextErrors = validateEnquiry(values);
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) {
       setStatus({ type: "idle" });
+      focusFirstErrorRef.current = true;
       return;
     }
 
+    submittingRef.current = true;
     setStatus({ type: "submitting" });
     try {
       const response = await fetch("/api/enquiries", {
@@ -42,62 +83,74 @@ export function ContactForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
-      const data = (await response.json()) as { message?: string };
-      setStatus({
-        type: "demo",
-        message:
-          data.message ??
-          "Enquiry submission is in demonstration mode. Your details have not been stored or emailed.",
-      });
+      const data: unknown = await response.json().catch(() => null);
+      const result = interpretEnquiryResponse(response.status, data);
+      if (result.type === "error" && result.errors) {
+        setErrors(result.errors);
+        focusFirstErrorRef.current = true;
+      }
+      setStatus(result);
     } catch {
       setStatus({
-        type: "demo",
+        type: "error",
         message:
-          "The enquiry could not be sent because no secure backend is configured yet. Your details have not been stored.",
+          "A network error prevented the request from completing. Your details are still here; please try again.",
       });
+    } finally {
+      submittingRef.current = false;
     }
   }
 
   if (status.type === "demo") {
     return (
       <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6">
-        <p className="font-heading text-lg font-semibold text-navy">
+        <h2 ref={demoHeadingRef} tabIndex={-1} className="font-heading text-lg font-semibold text-navy">
           Demonstration mode
-        </p>
+        </h2>
         <p className="mt-2 text-sm leading-6 text-slate">{status.message}</p>
         <p className="mt-3 text-sm leading-6 text-slate">
           Keep a copy of your message until a secure enquiry endpoint is
           connected. Nothing has been emailed or saved on a server.
         </p>
-        <pre className="mt-4 overflow-auto rounded-xl bg-white p-4 text-sm text-navy">
+        <pre className="mt-4 whitespace-pre-wrap break-words rounded-xl bg-white p-4 text-sm text-navy">
           {values.message}
         </pre>
         <Button
           type="button"
           className="mt-4"
-          onClick={() => {
-            setStatus({ type: "idle" });
-            setValues(emptyEnquiry);
-          }}
+          onClick={() => { returnFocusRef.current = true; setStatus({ type: "idle" }); }}
         >
-          Write another message
+          Return to form
         </Button>
       </div>
     );
   }
 
   return (
-    <form onSubmit={onSubmit} noValidate className="space-y-5">
+    <form
+      ref={formRef}
+      onSubmit={onSubmit}
+      noValidate
+      aria-busy={status.type === "submitting"}
+      className="space-y-5"
+    >
       <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
         Enquiry submission is in demo mode until a secure backend is configured.
         Valid forms will not be emailed or stored.
       </div>
+      {status.type === "error" ? (
+        <p role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+          {status.message}
+        </p>
+      ) : null}
       <Field
         id="fullName"
         label="Full name"
         value={values.fullName}
         error={errors.fullName}
         autoComplete="name"
+        maxLength={ENQUIRY_LIMITS.fullName}
+        required
         onChange={(value) => update("fullName", value)}
       />
       <Field
@@ -106,6 +159,8 @@ export function ContactForm() {
         value={values.businessName}
         error={errors.businessName}
         autoComplete="organization"
+        maxLength={ENQUIRY_LIMITS.businessName}
+        required
         onChange={(value) => update("businessName", value)}
       />
       <Field
@@ -115,6 +170,8 @@ export function ContactForm() {
         value={values.email}
         error={errors.email}
         autoComplete="email"
+        maxLength={ENQUIRY_LIMITS.email}
+        required
         onChange={(value) => update("email", value)}
       />
       <Field
@@ -125,6 +182,7 @@ export function ContactForm() {
         value={values.phone}
         error={errors.phone}
         autoComplete="tel"
+        maxLength={ENQUIRY_LIMITS.phone}
         onChange={(value) => update("phone", value)}
       />
       <SelectField
@@ -133,6 +191,7 @@ export function ContactForm() {
         value={values.industry}
         error={errors.industry}
         options={industryOptions}
+        required
         onChange={(value) => update("industry", value)}
       />
       <SelectField
@@ -141,6 +200,7 @@ export function ContactForm() {
         value={values.serviceInterest}
         error={errors.serviceInterest}
         options={serviceInterestOptions}
+        required
         onChange={(value) => update("serviceInterest", value)}
       />
       <div>
@@ -152,9 +212,12 @@ export function ContactForm() {
           name="message"
           rows={5}
           value={values.message}
+          maxLength={ENQUIRY_LIMITS.message}
           onChange={(event) => update("message", event.target.value)}
           aria-invalid={Boolean(errors.message)}
-          aria-describedby={errors.message ? "message-error" : undefined}
+          aria-required="true"
+          required
+          aria-describedby={errors.message ? "message-error message-count" : "message-count"}
           className={inputClass(Boolean(errors.message), "mt-1.5 min-h-[140px]")}
         />
         {errors.message ? (
@@ -162,14 +225,21 @@ export function ContactForm() {
             {errors.message}
           </p>
         ) : null}
+        <p id="message-count" className="mt-1.5 text-right text-xs text-slate">
+          {values.message.length} / {ENQUIRY_LIMITS.message} characters
+        </p>
       </div>
       <div>
-        <label className="flex items-start gap-3 text-sm leading-6 text-slate">
+        <label htmlFor="privacy" className="flex items-start gap-3 text-sm leading-6 text-slate">
           <input
+            id="privacy"
+            name="privacy"
             type="checkbox"
             checked={values.privacy}
             onChange={(event) => update("privacy", event.target.checked)}
             aria-invalid={Boolean(errors.privacy)}
+            aria-required="true"
+            required
             aria-describedby={errors.privacy ? "privacy-error" : undefined}
             className="mt-1 h-4 w-4 rounded border-mist text-royal"
           />
@@ -188,7 +258,9 @@ export function ContactForm() {
         ) : null}
       </div>
       <Button type="submit" disabled={status.type === "submitting"}>
-        {status.type === "submitting" ? "Checking..." : "Send enquiry"}
+        <span aria-live="polite">
+          {status.type === "submitting" ? "Checking enquiry..." : "Check enquiry"}
+        </span>
       </Button>
     </form>
   );
@@ -196,7 +268,7 @@ export function ContactForm() {
 
 function inputClass(invalid: boolean, extra?: string) {
   return cn(
-    "w-full rounded-xl border bg-white px-3.5 py-2.5 text-navy outline-none transition",
+    "w-full rounded-xl border bg-white px-3.5 py-2.5 text-navy focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-royal transition",
     invalid ? "border-red-400" : "border-mist focus:border-royal",
     extra,
   );
@@ -211,6 +283,8 @@ function Field({
   optional,
   type = "text",
   autoComplete,
+  maxLength,
+  required = false,
 }: {
   id: string;
   label: string;
@@ -220,6 +294,8 @@ function Field({
   optional?: boolean;
   type?: string;
   autoComplete?: string;
+  maxLength: number;
+  required?: boolean;
 }) {
   return (
     <div>
@@ -235,7 +311,10 @@ function Field({
         type={type}
         autoComplete={autoComplete}
         value={value}
+        maxLength={maxLength}
+        required={required}
         onChange={(event) => onChange(event.target.value)}
+        aria-required={required}
         aria-invalid={Boolean(error)}
         aria-describedby={error ? `${id}-error` : undefined}
         className={inputClass(Boolean(error), "mt-1.5")}
@@ -256,6 +335,7 @@ function SelectField({
   onChange,
   error,
   options,
+  required = false,
 }: {
   id: string;
   label: string;
@@ -263,6 +343,7 @@ function SelectField({
   onChange: (value: string) => void;
   error?: string;
   options: readonly { value: string; label: string }[];
+  required?: boolean;
 }) {
   return (
     <div>
@@ -273,8 +354,10 @@ function SelectField({
         id={id}
         name={id}
         value={value}
+        required={required}
         onChange={(event) => onChange(event.target.value)}
         aria-invalid={Boolean(error)}
+        aria-required={required}
         aria-describedby={error ? `${id}-error` : undefined}
         className={inputClass(Boolean(error), "mt-1.5")}
       >

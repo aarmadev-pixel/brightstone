@@ -6,7 +6,7 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata = pageMetadata({
   title: "Contact",
   description:
-    "Book a Brightstone Digital consultation by sending an enquiry. The form is in demonstration mode until a secure backend is configured.",
+    "Explore a Brightstone Digital consultation. The demonstration form checks enquiries but does not deliver or store them.",
   path: "/contact",
 });
 
@@ -16,7 +16,7 @@ export default function ContactPage() {
       <PageIntro
         eyebrow="Contact"
         title="Book a free consultation."
-        description="Tell us about your business and the work you would like to make easier. Until a booking provider is connected, this contact form is the consultation request route."
+        description="Explore what you would like to discuss. This demonstration form checks your enquiry but does not deliver it or book a consultation."
       />
       <section className="py-16 sm:py-20">
         <Container className="grid gap-10 lg:grid-cols-[1fr_0.8fr]">
@@ -40,8 +40,8 @@ export default function ContactPage() {
               number, or email address is published here yet.
             </p>
             <p className="mt-4 leading-7">
-              A separate booking calendar will be added later. Until then, use
-              this page rather than a third-party scheduling link.
+              A separate booking calendar is planned. Enquiry delivery and
+              consultation booking are not yet available on this page.
             </p>
           </aside>
         </Container>

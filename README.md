@@ -36,3 +36,16 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 # brightstone
 # brightstone
+
+## Local tests
+
+Use Node.js 22.15 or later in the Node 22 release line (verified with
+22.23.4). `npm test` uses the built-in test runner, TypeScript stripping and
+`module.registerHooks`; no additional test dependencies are required. The
+test-only resolver supports the application alias and imports the actual
+enquiry route handler with the installed Next.js implementation. Tests use
+synthetic data and do not send network requests.
+
+The enquiry endpoint intentionally returns HTTP 503 for valid enquiries.
+It does not store, email or forward personal information. Browser interaction
+and responsive visual checks remain separate from these automated tests.
