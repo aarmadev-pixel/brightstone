@@ -7,7 +7,7 @@ import { Menu, X } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { primaryNav } from "@/data/navigation";
+import { footerServiceLinks, primaryNav } from "@/data/navigation";
 import { cn } from "@/lib/cn";
 import { consultationHref } from "@/lib/site";
 
@@ -61,19 +61,28 @@ export function Header() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-mist/80 bg-white/90 backdrop-blur-md">
-      <Container width="wide" className="flex min-h-16 items-center justify-between gap-4 py-3">
-        <Logo variant="full" theme="light" />
+    <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-md">
+      <Container width="wide" className="flex min-h-18 items-center justify-between gap-4 py-3">
+        <Logo variant="full" theme="dark" />
         <nav ref={desktopNavRef} aria-label="Primary" className="hidden items-center gap-1 lg:flex">
-          {primaryNav.map((item) => (
+          {primaryNav.map((item) => item.href === "/services" ? (
+            <details key={item.href} className="relative" onKeyDown={event => {
+              if (event.key === "Escape") { event.currentTarget.open = false; event.currentTarget.querySelector("summary")?.focus(); }
+            }} onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) event.currentTarget.open = false; }}>
+              <summary className="cursor-pointer rounded-lg px-3 py-2.5 text-sm font-medium text-muted hover:text-foreground">Services <span aria-hidden="true">⌄</span></summary>
+              <div className="absolute left-0 top-full w-72 rounded-xl border border-border bg-background p-2 shadow-xl">
+                {[{href: "/services", label: "All services"}, ...footerServiceLinks].map(link => <Link key={link.href} href={link.href} onClick={event => { const details = event.currentTarget.closest("details"); if (details) details.open = false; }} className="block rounded-lg px-4 py-3 text-sm text-foreground hover:bg-card">{link.label}</Link>)}
+              </div>
+            </details>
+          ) : (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                "rounded-lg px-3 py-2 text-sm font-medium transition",
+                "rounded-lg px-3 py-2.5 text-sm font-medium transition",
                 isActive(pathname, item.href)
-                  ? "bg-royal/8 text-navy"
-                  : "text-slate hover:bg-offwhite hover:text-navy",
+                  ? "bg-blue/10 text-accent"
+                  : "text-muted hover:bg-surface hover:text-foreground",
               )}
               aria-current={isActive(pathname, item.href) ? "page" : undefined}
             >
@@ -83,13 +92,13 @@ export function Header() {
         </nav>
         <div className="hidden lg:block">
           <Button href={consultationHref} size="md">
-            Book a Free Consultation
+            Get a Free Consultation
           </Button>
         </div>
         <button
           type="button"
           ref={menuButtonRef}
-          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-mist text-navy lg:hidden"
+          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-border bg-card text-foreground lg:hidden"
           aria-expanded={open}
           aria-controls={menuId}
           aria-label={open ? "Close navigation menu" : "Open navigation menu"}
@@ -103,7 +112,7 @@ export function Header() {
           id={menuId}
           ref={mobileNavRef}
           aria-label="Mobile primary"
-          className="max-h-[calc(100dvh-4.5rem)] overflow-y-auto border-t border-mist bg-white lg:hidden"
+          className="max-h-[calc(100dvh-6rem)] overflow-y-auto border-t border-border bg-surface lg:hidden"
         >
           <Container className="flex flex-col gap-1 py-4">
             {primaryNav.map((item) => (
@@ -114,16 +123,17 @@ export function Header() {
                 className={cn(
                   "rounded-xl px-4 py-3 font-heading text-base font-semibold",
                   isActive(pathname, item.href)
-                    ? "bg-royal/8 text-navy"
-                    : "text-navy hover:bg-offwhite",
+                    ? "bg-blue/10 text-accent"
+                    : "text-foreground hover:bg-surface",
                 )}
                 aria-current={isActive(pathname, item.href) ? "page" : undefined}
               >
                 {item.label}
               </Link>
             ))}
+            <div className="ml-4 border-l border-border pl-3">{footerServiceLinks.map(item => <Link key={item.href} href={item.href} onClick={() => { setOpen(false); menuButtonRef.current?.focus(); }} className="block px-3 py-3 text-sm text-muted hover:text-foreground">{item.label}</Link>)}</div>
             <Button href={consultationHref} className="mt-3 w-full" onClick={() => { setOpen(false); menuButtonRef.current?.focus(); }}>
-              Book a Free Consultation
+              Get a Free Consultation
             </Button>
           </Container>
         </nav>

@@ -12,7 +12,7 @@ export function Card({
   return (
     <Tag
       className={cn(
-        "rounded-2xl border border-mist bg-white p-6 shadow-[var(--shadow-card)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)]",
+        "min-w-0 rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)] transition duration-200 hover:border-accent/40 hover:shadow-[var(--shadow-lift)]",
         className,
       )}
     >

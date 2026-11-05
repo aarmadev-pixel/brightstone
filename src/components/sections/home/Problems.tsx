@@ -29,11 +29,11 @@ const problems = [
 
 export function Problems() {
   return (
-    <section className="py-20 sm:py-24">
+    <section className="section-space">
       <Container>
         <SectionHeading
           eyebrow="The day-to-day strain"
-          title="Running a Business Shouldn't Be Complicated."
+          title="Less friction in your working day."
         />
         <div className="mt-12 grid gap-5 sm:grid-cols-2">
           {problems.map((problem) => (

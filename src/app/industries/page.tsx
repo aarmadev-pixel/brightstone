@@ -21,7 +21,7 @@ export default function IndustriesPage() {
         title="Built around the calls and jobs that fill your week."
         description="We start with trades because the pattern is familiar: customers call while you are already working. The same approach can be adapted to other service businesses."
       />
-      <section className="py-16 sm:py-20">
+      <section className="section-space">
         <Container className="space-y-8">
           {industries.map((industry) => {
             const Icon = industryIcons[industry.icon];
@@ -31,7 +31,7 @@ export default function IndustriesPage() {
               <article
                 key={industry.id}
                 id={headingId}
-                className="scroll-mt-28 rounded-[1.6rem] border border-mist bg-white p-6 shadow-[var(--shadow-card)] sm:p-10"
+                className="scroll-mt-28 rounded-[1.6rem] border border-border bg-card p-6 shadow-[var(--shadow-card)] sm:p-10"
               >
                 <div className="flex items-start gap-4">
                   <IconBadge>
@@ -45,14 +45,14 @@ export default function IndustriesPage() {
                   </div>
                 </div>
                 <h3 className="mt-8 text-lg font-semibold">Realistic examples</h3>
-                <p className="mt-1 text-sm text-slate">
+                <p className="mt-1 text-sm text-muted">
                   These are illustrations, not customer case studies.
                 </p>
                 <ul className="mt-4 grid gap-3 md:grid-cols-3">
                   {industry.examples.map((example) => (
                     <li
                       key={example}
-                      className="rounded-2xl border border-mist bg-offwhite p-4 text-sm leading-6"
+                      className="rounded-2xl border border-border bg-surface p-4 text-sm leading-6"
                     >
                       {example}
                     </li>

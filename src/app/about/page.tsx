@@ -34,19 +34,18 @@ export default function AboutPage() {
     <>
       <PageIntro
         eyebrow="About"
-        title="A UK technology agency for practical AI automation."
-        description="Brightstone Digital helps growing businesses save time, manage customer enquiries, and simplify daily operations using intelligent technology. The focus is useful systems, not novelty."
+        title="Professional websites. Practical automation. Built for UK businesses."
+        description="Brightstone Digital helps growing businesses save time, manage customer enquiries, and simplify daily operations using intelligent technology. We start with a professional website, then explore optional AI automation once it is live. Selected trials are subject to eligibility and agreed terms."
       />
-      <section className="py-16 sm:py-20">
+      <section className="section-space">
         <Container className="grid gap-12 lg:grid-cols-[1fr_0.9fr]">
           <div>
             <h2 className="text-3xl font-semibold">How we work</h2>
             <p className="mt-4 leading-7">
-              The company is being built around trades and other small and
-              medium-sized UK businesses that want a more organised way to
-              handle enquiries. We would rather explain the work clearly than
-              invent a longer history, a team roster, or a portfolio that does
-              not yet exist on this site.
+              We work with trades and other small and medium-sized UK businesses
+              that want a clearer online presence and a more organised way to
+              handle enquiries. Each project starts with your services, customers
+              and day-to-day working practices.
             </p>
             <p className="mt-4 leading-7">
               Professional, modern, and approachable is the standard: a website
@@ -59,9 +58,9 @@ export default function AboutPage() {
             {steps.map((step, index) => (
               <li
                 key={step.title}
-                className="rounded-2xl border border-mist bg-white p-5 shadow-[var(--shadow-card)]"
+                className="rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)]"
               >
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-royal">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
                   Step {index + 1}
                 </p>
                 <h3 className="mt-2 text-lg font-semibold">{step.title}</h3>

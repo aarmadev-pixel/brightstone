@@ -12,11 +12,11 @@ import {
   type EnquiryInput,
 } from "@/lib/enquiry";
 import { cn } from "@/lib/cn";
+import { enquiryAvailability } from "@/lib/enquiry-availability";
 
 type Status =
   | { type: "idle" }
   | { type: "submitting" }
-  | { type: "demo"; message: string }
   | { type: "error"; message: string };
 
 import { interpretEnquiryResponse } from "@/lib/enquiry-response";
@@ -27,8 +27,6 @@ export function ContactForm() {
   const [status, setStatus] = useState<Status>({ type: "idle" });
   const formRef = useRef<HTMLFormElement>(null);
   const submittingRef = useRef(false);
-  const demoHeadingRef = useRef<HTMLHeadingElement>(null);
-  const returnFocusRef = useRef(false);
   const focusFirstErrorRef = useRef(false);
 
   useEffect(() => {
@@ -38,14 +36,6 @@ export function ContactForm() {
       ?.querySelector<HTMLElement>('[aria-invalid="true"]')
       ?.focus();
   }, [errors]);
-
-  useEffect(() => {
-    if (status.type === "demo") demoHeadingRef.current?.focus();
-    else if (returnFocusRef.current) {
-      returnFocusRef.current = false;
-      formRef.current?.querySelector<HTMLElement>("#fullName")?.focus();
-    }
-  }, [status.type]);
 
   function update<K extends keyof EnquiryInput>(key: K, value: EnquiryInput[K]) {
     const nextValues = { ...values, [key]: value };
@@ -65,7 +55,7 @@ export function ContactForm() {
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (submittingRef.current) return;
+    if (!enquiryAvailability.enabled || submittingRef.current) return;
 
     const nextErrors = validateEnquiry(values);
     setErrors(nextErrors);
@@ -101,45 +91,22 @@ export function ContactForm() {
     }
   }
 
-  if (status.type === "demo") {
-    return (
-      <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6">
-        <h2 ref={demoHeadingRef} tabIndex={-1} className="font-heading text-lg font-semibold text-navy">
-          Demonstration mode
-        </h2>
-        <p className="mt-2 text-sm leading-6 text-slate">{status.message}</p>
-        <p className="mt-3 text-sm leading-6 text-slate">
-          Keep a copy of your message until a secure enquiry endpoint is
-          connected. Nothing has been emailed or saved on a server.
-        </p>
-        <pre className="mt-4 whitespace-pre-wrap break-words rounded-xl bg-white p-4 text-sm text-navy">
-          {values.message}
-        </pre>
-        <Button
-          type="button"
-          className="mt-4"
-          onClick={() => { returnFocusRef.current = true; setStatus({ type: "idle" }); }}
-        >
-          Return to form
-        </Button>
-      </div>
-    );
-  }
-
   return (
     <form
       ref={formRef}
       onSubmit={onSubmit}
       noValidate
+      aria-describedby={!enquiryAvailability.enabled ? "enquiry-availability" : undefined}
       aria-busy={status.type === "submitting"}
       className="space-y-5"
     >
-      <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-        Enquiry submission is in demo mode until a secure backend is configured.
-        Valid forms will not be emailed or stored.
-      </div>
-      {status.type === "error" ? (
-        <p role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+      {!enquiryAvailability.enabled ? (
+        <p id="enquiry-availability" role="status" className="rounded-xl border border-border bg-surface px-4 py-3 text-sm text-muted">
+          {enquiryAvailability.message}
+        </p>
+      ) : null}
+      {enquiryAvailability.enabled && status.type === "error" ? (
+        <p role="alert" className="rounded-xl border border-danger/40 bg-danger/5 px-4 py-3 text-sm text-danger">
           {status.message}
         </p>
       ) : null}
@@ -185,6 +152,9 @@ export function ContactForm() {
         maxLength={ENQUIRY_LIMITS.phone}
         onChange={(value) => update("phone", value)}
       />
+      <Field id="businessWebsite" label="Business website" optional type="url" value={values.businessWebsite ?? ""} error={errors.businessWebsite} maxLength={ENQUIRY_LIMITS.businessWebsite} onChange={value => update("businessWebsite", value)} />
+      <SelectField id="websiteStatus" label="Do you already have a business website? (optional)" value={values.websiteStatus ?? ""} error={errors.websiteStatus} options={[{value: "", label: "Select an option"}, {value: "yes", label: "Yes"}, {value: "no", label: "No"}, {value: "developing", label: "Currently being developed"}]} onChange={value => update("websiteStatus", value)} />
+      <div hidden aria-hidden="true"><label htmlFor="companyFax">Leave this field blank</label><input id="companyFax" name="companyFax" tabIndex={-1} autoComplete="off" value={values.companyFax ?? ""} onChange={event => update("companyFax", event.target.value)} maxLength={100} /></div>
       <SelectField
         id="industry"
         label="Industry"
@@ -204,8 +174,8 @@ export function ContactForm() {
         onChange={(value) => update("serviceInterest", value)}
       />
       <div>
-        <label htmlFor="message" className="block text-sm font-medium text-navy">
-          Message
+        <label htmlFor="message" className="block text-sm font-medium text-foreground">
+          Project description
         </label>
         <textarea
           id="message"
@@ -221,16 +191,16 @@ export function ContactForm() {
           className={inputClass(Boolean(errors.message), "mt-1.5 min-h-[140px]")}
         />
         {errors.message ? (
-          <p id="message-error" className="mt-1.5 text-sm text-red-700">
+          <p id="message-error" className="mt-1.5 text-sm text-danger">
             {errors.message}
           </p>
         ) : null}
-        <p id="message-count" className="mt-1.5 text-right text-xs text-slate">
+        <p id="message-count" className="mt-1.5 text-right text-xs text-muted">
           {values.message.length} / {ENQUIRY_LIMITS.message} characters
         </p>
       </div>
       <div>
-        <label htmlFor="privacy" className="flex items-start gap-3 text-sm leading-6 text-slate">
+        <label htmlFor="privacy" className="flex items-start gap-3 text-sm leading-6 text-muted">
           <input
             id="privacy"
             name="privacy"
@@ -241,25 +211,25 @@ export function ContactForm() {
             aria-required="true"
             required
             aria-describedby={errors.privacy ? "privacy-error" : undefined}
-            className="mt-1 h-4 w-4 rounded border-mist text-royal"
+            className="mt-1 h-5 w-5 shrink-0 rounded border-control text-accent"
           />
           <span>
-            I understand this form is in demonstration mode and I have read the{" "}
-            <a className="font-medium text-royal underline" href="/privacy">
-              draft privacy notice
+            I have read the{" "}
+            <a className="font-medium text-accent underline" href="/privacy">
+              privacy notice
             </a>
             .
           </span>
         </label>
         {errors.privacy ? (
-          <p id="privacy-error" className="mt-1.5 text-sm text-red-700">
+          <p id="privacy-error" className="mt-1.5 text-sm text-danger">
             {errors.privacy}
           </p>
         ) : null}
       </div>
-      <Button type="submit" disabled={status.type === "submitting"}>
+      <Button type="submit" className="w-full sm:w-auto" disabled={!enquiryAvailability.enabled || status.type === "submitting"}>
         <span aria-live="polite">
-          {status.type === "submitting" ? "Checking enquiry..." : "Check enquiry"}
+          {status.type === "submitting" ? "Sending enquiry..." : "Send enquiry"}
         </span>
       </Button>
     </form>
@@ -268,8 +238,8 @@ export function ContactForm() {
 
 function inputClass(invalid: boolean, extra?: string) {
   return cn(
-    "w-full rounded-xl border bg-white px-3.5 py-2.5 text-navy focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-royal transition",
-    invalid ? "border-red-400" : "border-mist focus:border-royal",
+    "w-full rounded-xl border bg-surface px-3.5 py-2.5 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent transition",
+    invalid ? "border-danger" : "border-control focus:border-accent",
     extra,
   );
 }
@@ -299,10 +269,10 @@ function Field({
 }) {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-navy">
+      <label htmlFor={id} className="block text-sm font-medium text-foreground">
         {label}
         {optional ? (
-          <span className="ml-1 font-normal text-slate">(optional)</span>
+          <span className="ml-1 font-normal text-muted">(optional)</span>
         ) : null}
       </label>
       <input
@@ -320,7 +290,7 @@ function Field({
         className={inputClass(Boolean(error), "mt-1.5")}
       />
       {error ? (
-        <p id={`${id}-error`} className="mt-1.5 text-sm text-red-700">
+        <p id={`${id}-error`} className="mt-1.5 text-sm text-danger">
           {error}
         </p>
       ) : null}
@@ -347,7 +317,7 @@ function SelectField({
 }) {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-navy">
+      <label htmlFor={id} className="block text-sm font-medium text-foreground">
         {label}
       </label>
       <select
@@ -368,7 +338,7 @@ function SelectField({
         ))}
       </select>
       {error ? (
-        <p id={`${id}-error`} className="mt-1.5 text-sm text-red-700">
+        <p id={`${id}-error`} className="mt-1.5 text-sm text-danger">
           {error}
         </p>
       ) : null}

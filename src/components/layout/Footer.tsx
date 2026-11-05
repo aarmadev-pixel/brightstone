@@ -9,14 +9,14 @@ export async function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-white/10 bg-navy text-slate-300">
-      <Container width="wide" className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
+    <footer className="border-t border-border bg-background text-muted">
+      <Container width="wide" className="grid gap-x-10 gap-y-8 py-16 sm:grid-cols-2 lg:grid-cols-4">
         <div className="sm:col-span-2 lg:col-span-1">
           <Logo variant="full" theme="dark" />
-          <p className="mt-4 max-w-xs text-sm leading-6 text-slate-300">
+          <p className="mt-4 max-w-xs text-sm leading-6 text-muted">
             {site.tagline}
           </p>
-          <p className="mt-3 max-w-sm text-sm leading-6 text-slate-400">
+          <p className="mt-3 max-w-sm text-sm leading-6 text-muted">
             Practical websites, AI reception, and automation for growing UK
             businesses.
           </p>
@@ -25,10 +25,10 @@ export async function Footer() {
           <p className="font-heading text-sm font-semibold tracking-wide text-white">
             Explore
           </p>
-          <ul className="mt-4 space-y-2.5 text-sm">
+          <ul className="mt-4 space-y-1 text-sm">
             {primaryNav.map((item) => (
               <li key={item.href}>
-                <Link className="transition hover:text-white" href={item.href}>
+                <Link className="inline-flex min-h-10 items-center transition hover:text-accent" href={item.href}>
                   {item.label}
                 </Link>
               </li>
@@ -39,10 +39,10 @@ export async function Footer() {
           <p className="font-heading text-sm font-semibold tracking-wide text-white">
             Services
           </p>
-          <ul className="mt-4 space-y-2.5 text-sm">
+          <ul className="mt-4 space-y-1 text-sm">
             {footerServiceLinks.map((item) => (
               <li key={`${item.href}-${item.label}`}>
-                <Link className="transition hover:text-white" href={item.href}>
+                <Link className="inline-flex min-h-10 items-center transition hover:text-accent" href={item.href}>
                   {item.label}
                 </Link>
               </li>
@@ -53,15 +53,16 @@ export async function Footer() {
           <p className="font-heading text-sm font-semibold tracking-wide text-white">
             Company
           </p>
-          <ul className="mt-4 space-y-2.5 text-sm">
+          <ul className="mt-4 space-y-1 text-sm">
+            <li><Link href="/pricing" className="inline-flex min-h-10 items-center hover:text-accent">Request a Custom Quote</Link></li>
             <li>
-              <Link className="transition hover:text-white" href="/contact">
+              <Link className="inline-flex min-h-10 items-center transition hover:text-accent" href="/contact">
                 Contact
               </Link>
             </li>
             {legalNav.map((item) => (
               <li key={item.href}>
-                <Link className="transition hover:text-white" href={item.href}>
+                <Link className="inline-flex min-h-10 items-center transition hover:text-accent" href={item.href}>
                   {item.label}
                 </Link>
               </li>
@@ -69,10 +70,10 @@ export async function Footer() {
           </ul>
         </div>
       </Container>
-      <div className="border-t border-white/10">
+      <div className="border-t border-border">
         <Container
           width="wide"
-          className="flex flex-col gap-2 py-6 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between"
+          className="flex flex-col gap-2 py-6 text-xs text-muted sm:flex-row sm:items-center sm:justify-between"
         >
           <p>
             © {year} {site.name}. All rights reserved.

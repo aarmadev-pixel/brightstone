@@ -1,25 +1,8 @@
-export type NavItem = {
-  href: string;
-  label: string;
-};
-
+import { homepageServices } from "@/data/services";
+export type NavItem = { href: string; label: string };
 export const primaryNav: NavItem[] = [
-  { href: "/", label: "Home" },
-  { href: "/services", label: "Services" },
-  { href: "/industries", label: "Industries" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
+ { href: "/", label: "Home" }, { href: "/services", label: "Services" },
+ { href: "/#how-it-works", label: "How It Works" }, { href: "/about", label: "About" }, { href: "/contact", label: "Contact" },
 ];
-
-export const footerServiceLinks: NavItem[] = [
-  { href: "/services/ai-receptionist", label: "AI Receptionist" },
-  { href: "/services", label: "All services" },
-  { href: "/industries", label: "Industries" },
-  { href: "/pricing", label: "Pricing" },
-];
-
-export const legalNav: NavItem[] = [
-  { href: "/privacy", label: "Privacy" },
-  { href: "/cookies", label: "Cookies" },
-];
+export const footerServiceLinks: NavItem[] = homepageServices.map(service => ({ href: service.href, label: service.shortTitle }));
+export const legalNav: NavItem[] = [{ href: "/privacy", label: "Privacy Policy" }, { href: "/cookies", label: "Cookies" }];

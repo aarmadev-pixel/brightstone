@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { enquiryAvailability } from "@/lib/enquiry-availability";
 
 import {
   parseEnquiryPayload,
@@ -15,7 +16,6 @@ function errorResponse(
   return NextResponse.json(
     {
       ok: false,
-      demo: true,
       message,
       ...(errors ? { errors } : {}),
     },
@@ -29,6 +29,14 @@ function errorResponse(
 }
 
 export async function POST(request: Request) {
+  // Browser requests must originate here. No IP addresses or personal data are retained.
+  const origin = request.headers.get("origin");
+  if (origin && origin !== new URL(request.url).origin) {
+    return errorResponse("This enquiry must be submitted from our website.", 403);
+  }
+  if (request.headers.get("sec-fetch-site") === "cross-site") {
+    return errorResponse("This enquiry must be submitted from our website.", 403);
+  }
   const contentType =
     request.headers.get("content-type") ?? "";
 
@@ -133,12 +141,9 @@ export async function POST(request: Request) {
     );
   }
 
-  // Demonstration mode:
-  // Do not store, log, email or forward personal data.
+  // Fail closed: no delivery provider is configured. Never acknowledge acceptance.
   return errorResponse(
-    "Enquiry submission is in demonstration mode. " +
-      "Your details have not been stored or emailed. " +
-      "A secure backend must be configured before public launch.",
+    `${enquiryAvailability.message} Your enquiry has not been sent.`,
     503,
   );
 }

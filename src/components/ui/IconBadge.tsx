@@ -10,7 +10,7 @@ export function IconBadge({
   return (
     <span
       className={cn(
-        "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-royal/8 text-royal",
+        "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-blue/20 bg-blue/10 text-accent",
         className,
       )}
     >

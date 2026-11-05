@@ -1,4 +1,6 @@
 export const homeFaqs = [
+ { question: "Do I need to buy AI automation with my website?", answer: "No. Website development is our starting point and stands on its own. Once your approved website is paid for and live, you can discuss optional automation without any requirement to subscribe." },
+ { question: "Does every website include free AI trials?", answer: "No. Selected services may have trials, subject to eligibility, setup, usage limits and agreed terms. Availability and duration depend on the selected service. Any paid continuation requires a separate agreement." },
   {
     question: "What does an AI receptionist do?",
     answer:
@@ -27,7 +29,7 @@ export const homeFaqs = [
   {
     question: "Are there additional usage charges?",
     answer:
-      "There can be. Telephony, AI call processing, SMS, and some third-party tools are typically billed according to usage or supplier rates. Indicative package pricing does not mean unlimited calls, messages, or API usage.",
+      "There can be. Telephony, AI call processing, SMS, and some third-party tools are typically billed according to usage or supplier rates. Scope, usage allowances and any supplier costs are confirmed in your individual quotation.",
   },
   {
     question: "Is the service suitable for small businesses?",
@@ -38,14 +40,9 @@ export const homeFaqs = [
 
 export const receptionistFaqs = [
   {
-    question: "Is the demonstration on this page a live phone call?",
+    question: "How is the receptionist activated?",
     answer:
-      "No. It is a scripted simulation that shows how a conversation could be structured. It is not connected to a live telephone line or a paid voice AI service.",
-  },
-  {
-    question: "Is the AI receptionist already fully operational?",
-    answer:
-      "The live service requires setup, telephony, and integration work. This website explains the intended service and shows how it could work. Individual features should only be treated as available once they have been configured for your business.",
+      "We agree the call flow, telephony, integrations and handover rules with you, then configure and test the service before activation. Features depend on the setup agreed for your business.",
   },
   {
     question: "What information can it collect?",
@@ -55,6 +52,6 @@ export const receptionistFaqs = [
   {
     question: "What happens after the call?",
     answer:
-      "The intended outcome is a clear record of the enquiry for your team to review. How that record is delivered — for example by email, a shared inbox, or a future dashboard — is agreed during setup.",
+      "The intended outcome is a clear record of the enquiry for your team to review. How that record is delivered — for example by email, a shared inbox, or a connected business tool — is agreed during setup.",
   },
 ];

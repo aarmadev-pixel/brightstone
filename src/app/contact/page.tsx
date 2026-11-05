@@ -6,7 +6,7 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata = pageMetadata({
   title: "Contact",
   description:
-    "Explore a Brightstone Digital consultation. The demonstration form checks enquiries but does not deliver or store them.",
+    "Discuss professional websites and optional AI automation with Brightstone Digital.",
   path: "/contact",
 });
 
@@ -15,12 +15,12 @@ export default function ContactPage() {
     <>
       <PageIntro
         eyebrow="Contact"
-        title="Book a free consultation."
-        description="Explore what you would like to discuss. This demonstration form checks your enquiry but does not deliver it or book a consultation."
+        title="Discuss your project."
+        description="Tell us about your business, the website you need and the processes you would like to simplify."
       />
-      <section className="py-16 sm:py-20">
+      <section className="section-space">
         <Container className="grid gap-10 lg:grid-cols-[1fr_0.8fr]">
-          <div className="rounded-[1.6rem] border border-mist bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
+          <div className="rounded-[1.6rem] border border-border bg-card p-6 shadow-[var(--shadow-card)] sm:p-8">
             <h2 className="text-2xl font-semibold">Enquiry form</h2>
             <p className="mt-2 text-sm leading-7">
               Required fields are labelled. Phone number is optional. Please do
@@ -30,18 +30,19 @@ export default function ContactPage() {
               <ContactForm />
             </div>
           </div>
-          <aside className="rounded-[1.6rem] border border-mist bg-navy p-6 text-slate-300 sm:p-8">
+          <aside className="rounded-[1.6rem] border border-border bg-background p-6 text-muted sm:p-8">
             <h2 className="text-2xl font-semibold text-white">
-              What happens next
+              Your consultation
             </h2>
             <p className="mt-4 leading-7">
-              When a secure backend is connected, enquiries will be reviewed
-              before a conversation is arranged. No office address, telephone
-              number, or email address is published here yet.
+              A consultation covers your services, current website, priorities
+              and any integrations you need. We agree the scope and provide a
+              tailored quotation before work begins.
             </p>
             <p className="mt-4 leading-7">
-              A separate booking calendar is planned. Enquiry delivery and
-              consultation booking are not yet available on this page.
+              Buying a website does not require an AI subscription. Selected
+              automation trials may be available after launch, subject to
+              eligibility and agreed terms.
             </p>
           </aside>
         </Container>

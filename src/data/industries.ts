@@ -63,7 +63,7 @@ export const industries: Industry[] = [
     detail:
       "Brightstone Digital is starting with trades, but the underlying need is familiar across many small and medium-sized businesses: missed calls, repetitive admin, and enquiries that arrive in too many places. We look at how customers currently get in touch and design a practical setup around that.",
     examples: [
-      "A local service business that misses calls during appointments.",
+      "A garage door company that needs a website for installation and repair enquiries.",
       "A company whose website does not explain services clearly.",
       "A team that wants follow-ups and booking requests to follow one process.",
     ],

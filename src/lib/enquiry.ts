@@ -15,8 +15,8 @@ export const serviceInterestOptions = [
   { value: "reviews", label: "Review management" },
   { value: "follow-ups", label: "Automated follow-ups" },
   { value: "automation", label: "Workflow automation" },
-  { value: "package", label: "Full Brightstone Business package" },
-  { value: "not-sure", label: "Not sure yet" },
+  { value: "package", label: "Multiple Services" },
+  { value: "not-sure", label: "General Enquiry" },
 ] as const;
 
 export type EnquiryInput = {
@@ -28,6 +28,9 @@ export type EnquiryInput = {
   serviceInterest: string;
   message: string;
   privacy: boolean;
+  businessWebsite?: string;
+  websiteStatus?: string;
+  companyFax?: string;
 };
 
 export type EnquiryErrors = Partial<
@@ -40,6 +43,7 @@ export const ENQUIRY_LIMITS = {
   email: 254,
   phone: 30,
   message: 2000,
+  businessWebsite: 500,
 } as const;
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -66,6 +70,9 @@ export function emptyEnquiry(): EnquiryInput {
     serviceInterest: "",
     message: "",
     privacy: false,
+    businessWebsite: "",
+    websiteStatus: "",
+    companyFax: "",
   };
 }
 
@@ -130,6 +137,15 @@ export function validateEnquiry(
     errors.message = "Your message is too long.";
   }
 
+  if (input.businessWebsite) {
+    try {
+      const url = new URL(input.businessWebsite);
+      if (input.businessWebsite.length > ENQUIRY_LIMITS.businessWebsite || !["https:", "http:"].includes(url.protocol) || !url.hostname.includes(".") || url.username || url.password) throw new Error();
+    } catch { errors.businessWebsite = "Enter a valid http or https website address, or leave blank."; }
+  }
+  if (input.websiteStatus && !["yes", "no", "developing"].includes(input.websiteStatus)) errors.websiteStatus = "Select a valid website status.";
+  if (input.companyFax) errors.companyFax = "Unable to process this enquiry.";
+
   if (input.privacy !== true) {
     errors.privacy =
       "Please acknowledge the privacy notice before submitting.";
@@ -167,6 +183,9 @@ export function parseEnquiryPayload(
     }
   }
 
+  for (const field of ["businessWebsite", "websiteStatus", "companyFax"]) {
+    if (data[field] !== undefined && typeof data[field] !== "string") return null;
+  }
   if (typeof data.privacy !== "boolean") {
     return null;
   }
@@ -180,5 +199,8 @@ export function parseEnquiryPayload(
     serviceInterest: data.serviceInterest as string,
     message: data.message as string,
     privacy: data.privacy,
+    ...(data.businessWebsite !== undefined ? { businessWebsite: data.businessWebsite as string } : {}),
+    ...(data.websiteStatus !== undefined ? { websiteStatus: data.websiteStatus as string } : {}),
+    ...(data.companyFax !== undefined ? { companyFax: data.companyFax as string } : {}),
   };
 }

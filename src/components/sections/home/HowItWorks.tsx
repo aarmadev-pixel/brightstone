@@ -2,38 +2,26 @@ import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
 const steps = [
-  {
-    n: "01",
-    title: "Tell Us About Your Business",
-    body: "Share how customers currently get in touch, the jobs you take on, and the admin that takes up too much of the week.",
-  },
-  {
-    n: "02",
-    title: "We Build Your Solution",
-    body: "We design the website, receptionist, and automations around those processes, using information you approve.",
-  },
-  {
-    n: "03",
-    title: "Your Business Runs Smarter",
-    body: "Enquiries are captured more consistently, and your team has a clearer record to work from as the setup is refined.",
-  },
+ { n: "01", title: "Build Your Website", body: "We design and develop a professional website tailored to your business, helping customers discover your services and get in touch. You review and approve the work; payment and hosting are agreed before launch." },
+ { n: "02", title: "Explore AI Automation", body: "Once your website is live, discover how selected AI-powered tools could support your business through available free trials. Eligibility, usage limits and service-specific terms apply." },
+ { n: "03", title: "Choose What Works", body: "Continue with the services that deliver value to your business. Choose the tools you need, without being required to purchase unnecessary extras. Any paid continuation is agreed separately." },
 ];
 
 export function HowItWorks() {
   return (
-    <section className="py-20 sm:py-24">
+    <section id="how-it-works" className="section-space scroll-mt-24">
       <Container>
         <SectionHeading
           eyebrow="How it works"
-          title="Simple to Start. Easy to Manage."
+          title="Start With a Great Website. Add Intelligence When You’re Ready."
         />
         <ol className="mt-12 grid gap-6 lg:grid-cols-3">
           {steps.map((step, index) => (
-            <li key={step.n} className="relative rounded-2xl border border-mist bg-white p-6">
+            <li key={step.n} className="relative rounded-2xl border border-border bg-card p-6 sm:p-8">
               {index < steps.length - 1 ? (
                 <span className="pointer-events-none absolute right-[-14px] top-10 hidden h-px w-7 bg-mist lg:block" />
               ) : null}
-              <p className="font-heading text-sm font-semibold tracking-[0.18em] text-royal">
+              <p className="font-heading text-sm font-semibold tracking-[0.18em] text-accent">
                 {step.n}
               </p>
               <h3 className="mt-3 text-xl font-semibold">{step.title}</h3>

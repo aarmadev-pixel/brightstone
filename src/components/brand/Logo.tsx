@@ -44,7 +44,7 @@ export function Logo({
         <span
           className={cn(
             "font-heading text-[1.05rem] font-semibold tracking-[-0.04em]",
-            light ? "text-navy" : "text-white",
+            light ? "text-foreground" : "text-white",
           )}
         >
           Brightstone
@@ -53,7 +53,7 @@ export function Logo({
           <span
             className={cn(
               "mt-0.5 text-[0.62rem] font-semibold tracking-[0.22em]",
-              light ? "text-royal" : "text-sky",
+              light ? "text-accent" : "text-accent",
             )}
           >
             DIGITAL

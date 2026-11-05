@@ -96,3 +96,14 @@ for (const field of Object.keys(validEnquiry())) {
     assert.equal(parseEnquiryPayload({ ...validEnquiry(), [field]: null }), null);
   });
 }
+
+test("validates optional website fields and rejects honeypot submissions", () => {
+  assert.deepEqual(validateEnquiry({ ...validEnquiry(), businessWebsite: "https://example.co.uk", websiteStatus: "developing" }), {});
+  for (const businessWebsite of ["javascript:alert(1)", "https://user:pass@example.com", "not a URL", "https://example.com/" + "x".repeat(500)]) {
+    assert.ok(validateEnquiry({ ...validEnquiry(), businessWebsite }).businessWebsite);
+  }
+  assert.ok(validateEnquiry({ ...validEnquiry(), websiteStatus: "unknown" }).websiteStatus);
+  assert.ok(validateEnquiry({ ...validEnquiry(), companyFax: "spam" }).companyFax);
+  assert.equal(parseEnquiryPayload({ ...validEnquiry(), businessWebsite: 42 }), null);
+  assert.equal(parseEnquiryPayload({ ...validEnquiry(), websiteStatus: false }), null);
+});

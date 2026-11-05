@@ -52,7 +52,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en-GB"
       className={`${inter.variable} ${manrope.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-offwhite font-sans text-slate">
+      <body className="flex min-h-full flex-col bg-surface font-sans text-muted">
         <SkipLink />
         <Header />
         <main id="main" className="flex-1">

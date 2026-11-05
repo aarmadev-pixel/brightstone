@@ -2,19 +2,15 @@ import Link from "next/link";
 import { cn } from "@/lib/cn";
 
 const variants = {
-  primary:
-    "bg-royal text-white shadow-sm hover:bg-royal-dark hover:-translate-y-px",
-  secondary:
-    "bg-white text-navy border border-mist hover:border-royal/30 hover:bg-offwhite",
-  light:
-    "bg-white text-navy hover:bg-sky/15",
-  outline:
-    "border border-white/20 bg-white/5 text-white hover:bg-white/10",
+  primary: "border border-royal bg-royal text-white shadow-sm hover:border-royal-dark hover:bg-royal-dark",
+  secondary: "border border-control bg-transparent text-foreground hover:border-accent hover:bg-card",
+  light: "border border-royal bg-royal text-white shadow-sm hover:border-royal-dark hover:bg-royal-dark",
+  outline: "border border-control bg-transparent text-foreground hover:border-accent hover:bg-card",
 } as const;
 
 const sizes = {
-  md: "h-11 px-5 text-sm",
-  lg: "h-12 px-6 text-sm sm:text-[0.95rem]",
+  md: "min-h-11 px-5 py-2.5 text-sm",
+  lg: "min-h-12 px-6 py-3 text-sm sm:text-[0.95rem]",
 } as const;
 
 type Common = {
@@ -42,7 +38,7 @@ export function Button({
   ...props
 }: ButtonAsButton | ButtonAsLink) {
   const classes = cn(
-    "inline-flex items-center justify-center gap-2 rounded-xl font-heading font-semibold tracking-[-0.01em] transition duration-200 disabled:cursor-not-allowed disabled:opacity-60",
+    "inline-flex max-w-full text-center items-center justify-center gap-2 rounded-xl font-heading font-semibold tracking-[-0.01em] transition duration-200 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-royal",
     variants[variant],
     sizes[size],
     className,

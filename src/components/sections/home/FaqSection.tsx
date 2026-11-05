@@ -11,7 +11,7 @@ export function FaqSection({
   title?: string;
 }) {
   return (
-    <section className="py-20 sm:py-24">
+    <section className="section-space">
       <Container className="max-w-3xl">
         <SectionHeading eyebrow="FAQ" title={title} />
         <div className="mt-10">

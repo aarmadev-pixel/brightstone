@@ -1,25 +1,23 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { interpretEnquiryResponse } from "../src/lib/enquiry-response.ts";
-const demo = { ok: false, demo: true, message: "Demo" };
-for (const status of [200, 400, 413, 415, 500, 502]) {
-  test(`HTTP ${status} with demo marker remains an error`, () => {
-    assert.equal(interpretEnquiryResponse(status, demo).type, "error");
+
+for (const status of [200, 201, 202, 400, 403, 413, 415, 500, 502, 503]) {
+  test(`HTTP ${status} cannot claim delivery without a configured integration`, () => {
+    for (const body of [null, {}, {ok: true, message: "Accepted"}, {ok: false, message: "Unavailable"}]) {
+      assert.equal(interpretEnquiryResponse(status, body).type, "error");
+    }
   });
 }
-test("only expected 503 response enters demo screen", () => {
-  assert.equal(interpretEnquiryResponse(503, demo).type, "demo");
+test("503 clearly states the enquiry was not sent", () => {
+  assert.match(interpretEnquiryResponse(503, {}).message, /has not been sent/);
 });
-for (const body of [null, [], "string", 1, {}, { ...demo, demo: false },
-  { ...demo, message: {} }, { ...demo, ok: true }, { ...demo, errors: { email: 123 } }]) {
-  test(`rejects unexpected response ${JSON.stringify(body)}`, () => {
-    assert.equal(interpretEnquiryResponse(503, body).type, "error");
-  });
-}
 test("400 associates validated field errors", () => {
-  assert.deepEqual(interpretEnquiryResponse(400, { ...demo, errors: { email: "Invalid email" } }).errors,
-    { email: "Invalid email" });
+  assert.deepEqual(interpretEnquiryResponse(400, { ok: false, message: "Invalid", errors: {email: "Invalid email", websiteStatus: "Invalid status"} }).errors,
+    { email: "Invalid email", websiteStatus: "Invalid status" });
 });
-test("unknown field errors are rejected", () => {
-  assert.equal(interpretEnquiryResponse(400, { ...demo, errors: { secret: "unexpected" } }).errors, undefined);
+test("untrusted error fields and internal messages are not displayed", () => {
+  const result = interpretEnquiryResponse(400, { ok: false, message: "private provider details", errors: {secret: "unexpected"} });
+  assert.equal(result.errors, undefined);
+  assert.equal(result.message.includes("private provider details"), false);
 });

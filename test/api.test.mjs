@@ -17,16 +17,16 @@ async function check(body, status, extraHeaders = {}) {
   assert.match(response.headers.get("content-type"), /application\/json/);
   const data = await response.json();
   assert.equal(data.ok, false);
-  assert.equal(data.demo, true);
+  assert.equal("demo" in data, false);
   assert.equal(typeof data.message, "string");
   assert.ok(data.message.length > 0);
   assert.equal(JSON.stringify(data).includes(valid.email), false);
   return data;
 }
-test("valid enquiry without Content-Length returns demo 503", async () => {
+test("valid enquiry without Content-Length returns unavailable 503", async () => {
   await check(JSON.stringify(valid), 503);
 });
-test("valid enquiry with Content-Length returns demo 503", async () => {
+test("valid enquiry with Content-Length returns unavailable 503", async () => {
   const body = JSON.stringify(valid);
   await check(body, 503, { "content-length": String(Buffer.byteLength(body)) });
 });
@@ -64,4 +64,16 @@ test("streamed oversized request cancels reading", async () => {
   });
   assert.equal((await POST(request)).status, 413);
   assert.equal(cancelled, true);
+});
+
+test("rejects cross-origin browser submissions", async () => {
+  await check(JSON.stringify(valid), 403, { origin: "https://unrelated.example" });
+  await check(JSON.stringify(valid), 403, { "sec-fetch-site": "cross-site" });
+});
+test("accepts same-origin requests without claiming delivery", async () => {
+  await check(JSON.stringify(valid), 503, { origin: "http://localhost" });
+});
+test("rejects honeypot and invalid optional website fields", async () => {
+  await check(JSON.stringify({ ...valid, companyFax: "automated spam" }), 400);
+  await check(JSON.stringify({ ...valid, businessWebsite: "javascript:alert(1)" }), 400);
 });

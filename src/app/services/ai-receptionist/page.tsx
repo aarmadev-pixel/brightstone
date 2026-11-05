@@ -6,8 +6,7 @@ import {
   UserRound,
   ClipboardPen,
 } from "lucide-react";
-import { ReceptionistDemo } from "@/components/demos/ReceptionistDemo";
-import { ReceptionistPreview } from "@/components/demos/ReceptionistPreview";
+import { ServicePage } from "@/components/sections/ServicePage";
 import { FaqSection } from "@/components/sections/home/FaqSection";
 import { FinalCta } from "@/components/sections/FinalCta";
 import { Button } from "@/components/ui/Button";
@@ -76,40 +75,37 @@ const scenarios = [
 export default function AiReceptionistPage() {
   return (
     <>
-      <section className="relative overflow-hidden bg-navy py-16 text-white lg:py-24">
-        <div className="pointer-events-none absolute -left-20 top-10 h-72 w-72 rounded-full bg-royal/30 blur-3xl" />
-        <div className="pointer-events-none absolute right-0 top-0 h-80 w-80 rounded-full bg-sky/20 blur-3xl" />
-        <Container width="wide" className="relative grid items-center gap-12 lg:grid-cols-2">
+      <section className="intro-gradient relative border-b border-border bg-background section-space text-foreground">
+        <Container width="wide" className="relative grid items-center gap-12 ">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
               AI telephone receptionist
             </p>
             <h1 className="mt-4 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
-              Never Let a Busy Day Mean a Missed Enquiry.
+              A clearer way to handle calls on busy days.
             </h1>
-            <p className="mt-5 max-w-xl text-lg leading-8 text-slate-300">
+            <p className="mt-5 max-w-xl text-lg leading-8 text-muted">
               An AI receptionist can answer the phone, take a structured
               message, and help with appointment requests while you stay focused
               on the job in front of you. The live service needs setup,
               telephony, and integration before it is operational.
             </p>
             <div className="mt-8">
-              <Button href={consultationHref} variant="light" size="lg">
+              <Button href={consultationHref} variant="primary" size="lg">
                 Book a Free Consultation
               </Button>
             </div>
           </div>
-          <ReceptionistPreview />
         </Container>
       </section>
-      <section className="py-20">
+      <section className="section-space">
         <Container>
           <h2 className="max-w-2xl text-3xl font-semibold">
             What the receptionist can be set up to do
           </h2>
           <p className="mt-4 max-w-2xl leading-7">
-            These are intended capabilities, configured around your business.
-            They should not be treated as already live for every customer.
+            Call handling, handover rules and available features are agreed and
+            configured for your business before activation.
           </p>
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {capabilities.map((item) => (
@@ -124,7 +120,7 @@ export default function AiReceptionistPage() {
           </div>
         </Container>
       </section>
-      <section className="bg-white py-20">
+      <section className="bg-surface section-space">
         <Container>
           <h2 className="text-3xl font-semibold">Example call scenarios</h2>
           <div className="mt-8 grid gap-5 md:grid-cols-3">
@@ -137,18 +133,7 @@ export default function AiReceptionistPage() {
           </div>
         </Container>
       </section>
-      <section className="py-20">
-        <Container>
-          <h2 className="text-3xl font-semibold">Interactive demonstration</h2>
-          <p className="mt-3 max-w-2xl leading-7">
-            Step through a scripted conversation. This simulation is labelled
-            clearly and is not connected to a live telephone line.
-          </p>
-          <div className="mt-10">
-            <ReceptionistDemo />
-          </div>
-        </Container>
-      </section>
+      <ServicePage id="ai-receptionist" />
       <FaqSection items={receptionistFaqs} title="AI receptionist questions" />
       <FinalCta description="If missed calls are costing you time, we can talk through a receptionist setup that fits the way you work." />
     </>

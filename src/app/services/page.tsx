@@ -22,9 +22,9 @@ export default function ServicesPage() {
       <PageIntro
         eyebrow="Services"
         title="Practical technology for the way your business already works."
-        description="Each service is designed to reduce repetitive admin and make customer enquiries easier to handle. Live features depend on setup and integration, and are agreed during consultation."
+        description="Start with a professional website, then explore optional AI tools once it is live. Selected trials depend on eligibility, setup and agreed terms. You never have to buy automation with your website. Email and SMS workflows require appropriate customer permissions and compliance with applicable UK regulations."
       />
-      <section className="py-16 sm:py-20">
+      <section className="section-space">
         <Container className="space-y-10">
           {services.map((service) => {
             const Icon = serviceIcons[service.icon];
@@ -32,7 +32,7 @@ export default function ServicesPage() {
               <article
                 key={service.id}
                 id={service.id}
-                className="scroll-mt-28 rounded-[1.6rem] border border-mist bg-white p-6 shadow-[var(--shadow-card)] sm:p-10"
+                className="scroll-mt-28 rounded-[1.6rem] border border-border bg-card p-6 shadow-[var(--shadow-card)] sm:p-10"
               >
                 <div className="flex flex-wrap items-start gap-4">
                   <IconBadge>
@@ -73,9 +73,9 @@ export default function ServicesPage() {
                 </div>
                 <div className="mt-8 flex flex-wrap items-center gap-4">
                   <Button href={consultationHref}>Book a Free Consultation</Button>
-                  {service.id === "ai-receptionist" ? (
-                    <Link href="/services/ai-receptionist" className="text-sm font-semibold text-royal">
-                      View the AI receptionist page
+                  {service.id !== "automation" ? (
+                    <Link href={service.href} className="text-sm font-semibold text-accent">
+                      Explore {service.shortTitle}
                     </Link>
                   ) : null}
                 </div>

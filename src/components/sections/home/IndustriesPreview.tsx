@@ -9,11 +9,11 @@ import { industries } from "@/data/industries";
 
 export function IndustriesPreview() {
   return (
-    <section className="py-20 sm:py-24">
+    <section className="section-space">
       <Container>
         <SectionHeading
           eyebrow="Industries"
-          title="Built for Businesses Like Yours."
+          title="Built for businesses like yours."
         />
         <div className="mt-12 grid gap-5 sm:grid-cols-2">
           {industries.map((industry) => {
@@ -29,7 +29,7 @@ export function IndustriesPreview() {
                 </p>
                 <Link
                   href={industry.href}
-                  className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-royal"
+                  className="mt-6 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-accent"
                 >
                   Learn more
                   <ArrowRight className="h-4 w-4" />

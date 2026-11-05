@@ -9,11 +9,12 @@ import { homepageServices } from "@/data/services";
 
 export function ServicesGrid() {
   return (
-    <section className="bg-white py-20 sm:py-24">
+    <section className="bg-surface section-space">
       <Container>
         <SectionHeading
           eyebrow="Services"
-          title="Everything Your Business Needs to Work Smarter."
+          title="Useful technology. Built around your business."
+          description="From your first impression online to the enquiries that follow, explore a setup that fits the way you work."
         />
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {homepageServices.map((service) => {
@@ -29,9 +30,9 @@ export function ServicesGrid() {
                 </p>
                 <Link
                   href={service.href}
-                  className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-royal"
+                  className="mt-6 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-accent"
                 >
-                  Learn More
+                  Explore {service.shortTitle}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Card>

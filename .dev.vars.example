@@ -1,0 +1,2 @@
+# Optional local Workers environment; copy to .dev.vars for local preview.
+NEXTJS_ENV=development

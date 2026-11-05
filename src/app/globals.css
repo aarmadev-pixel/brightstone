@@ -1,27 +1,40 @@
 @import "tailwindcss";
 
 :root {
-  --navy: #101828;
+  color-scheme: dark;
+  --background: #080b12;
+  --surface: #111827;
+  --card: #151d2e;
+  --foreground: #f8fafc;
+  --muted: #94a3b8;
+  --border: #1e293b;
+  --control: #5b6d89;
   --royal: #2563eb;
-  --sky: #38bdf8;
-  --offwhite: #f8fafc;
-  --slate: #475467;
+  --royal-hover: #1d4ed8;
+  --blue: #3b82f6;
+  --accent: #60a5fa;
+  --warning: #fcd34d;
+  --danger: #fda4af;
 }
 
 @theme inline {
-  --color-navy: #101828;
-  --color-navy-soft: #1d2939;
-  --color-royal: #2563eb;
-  --color-royal-dark: #1d4ed8;
-  --color-sky: #38bdf8;
-  --color-offwhite: #f8fafc;
-  --color-slate: #475467;
-  --color-mist: #e2e8f0;
-  --color-ink: #0b1220;
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-control: var(--control);
+  --color-royal: var(--royal);
+  --color-royal-dark: var(--royal-hover);
+  --color-blue: var(--blue);
+  --color-accent: var(--accent);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-manrope), var(--font-inter), sans-serif;
-  --shadow-card: 0 1px 2px rgb(16 24 40 / 0.06), 0 12px 32px rgb(16 24 40 / 0.06);
-  --shadow-lift: 0 16px 40px rgb(16 24 40 / 0.12);
+  --shadow-card: 0 8px 24px rgb(0 0 0 / 0.12);
+  --shadow-lift: 0 16px 32px rgb(0 0 0 / 0.2);
 }
 
 html {
@@ -44,8 +57,8 @@ html {
 }
 
 body {
-  background: var(--offwhite);
-  color: var(--slate);
+  background: var(--background);
+  color: var(--muted);
   font-family: var(--font-sans);
 }
 
@@ -55,60 +68,23 @@ body {
   h3,
   h4 {
     font-family: var(--font-heading);
-    color: var(--navy);
+    color: var(--foreground);
     letter-spacing: -0.03em;
   }
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--sky) 35%, white);
-  color: var(--navy);
+  background: var(--royal);
+  color: var(--foreground);
 }
 
 :focus-visible {
-  outline: 2px solid var(--royal);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
 
 .font-heading {
   font-family: var(--font-heading);
-}
-
-.hero-grid {
-  background-image:
-    linear-gradient(rgb(56 189 248 / 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(56 189 248 / 0.07) 1px, transparent 1px);
-  background-size: 56px 56px;
-  mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
-}
-
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes pulse-dot {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.35;
-  }
-}
-
-.animate-fade-up {
-  animation: fade-up 700ms ease-out both;
-}
-
-.animate-pulse-dot {
-  animation: pulse-dot 1.8s ease-in-out infinite;
 }
 
 details summary::-webkit-details-marker {
@@ -117,4 +93,24 @@ details summary::-webkit-details-marker {
 
 details summary {
   list-style: none;
+}
+
+@layer base {
+  body { line-height: 1.65; }
+  h1, h2 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+  input, select, textarea { accent-color: var(--royal); }
+  input::placeholder, textarea::placeholder { color: var(--muted); }
+}
+
+@utility section-space {
+  padding-block: clamp(4rem, 7vw, 7rem);
+}
+
+@utility surface-gradient {
+  background-image: linear-gradient(135deg, var(--card), var(--surface));
+}
+
+@utility intro-gradient {
+  background-image: radial-gradient(ellipse at top right, color-mix(in srgb, var(--royal) 12%, transparent), transparent 65%);
 }
